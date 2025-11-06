@@ -1,0 +1,37 @@
+ShowKey: False
+
+Start: [start] START
+  Leads to: [info_receive_pack]
+
+Information: [info_receive_pack]
+  Title: Roofing Team receive pack from Ops
+  Leads to: [act_review_download]
+
+Action: [act_review_download]
+  Title: RTL 
+  Details: Review pack & download locally (in case there is no signal on site)
+  Leads to: [act_installation_team]
+
+Action: [act_installation_team]
+  Title: Installation Team
+  Details: Team Leaders are accountable for ensuring all appropriate documents are briefed to their teams & signed when on site — see appendix iii for details.
+  Details: • Roofing RAMS, Pre-Install Check Sheet & Telehandler Checklist must be accessed on SharePoint, completed, and signed by all relevant personnel BEFORE they can begin work.
+  Details: • The signed documents must be saved to the install pack folder by 10:00am — If there is no internet access on site, inform Ops, sign locally and email to Ops at the first opportunity.
+  Details: Personnel change — Team Leaders must brief the QCM, and confirm that any new team members have signed the RAMS.
+  Details: H&S Issues — Any safety issues that arise during the installation must be reported to the QCM for resolution and updated in the Risk Assessment.
+  Leads to: [act_qcm_day1]
+
+Action: [act_qcm_day1]
+  Title: QCM — Day one of installation
+  Details: 11:00am — check signed docs have saved successfully; if not received, contact RTL to resolve.
+  Details: During Installation — If there is a subsequent change to personnel, check that the RAMS have successfully been updated with their signatures.
+  Leads to: [act_team_leader_complete]
+
+Action: [act_team_leader_complete]
+  Title: Team Leader — Roof Installation Complete
+  Details: • Perform a first-fix quality check — see PROC 003 for full details.
+  Details: • Save the report in the installation pack folder.
+  Details: • Call QCM, PM & RTM to confirm the installation is ready for inspection and that all relevant docs are signed & saved in the installation pack folder.
+  Leads to: [end]
+
+End: [end] END

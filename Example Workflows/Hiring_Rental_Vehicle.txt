@@ -1,0 +1,35 @@
+ShowKey: false
+
+Start: [start] START
+  Leads to: [act_driver_request]
+
+Action: [act_driver_request]
+  Title: Driver — Request rental vehicle
+  Details: • Obtain line manager’s authorisation for a rental vehicle.
+  Details: • Contact Ops, provide authorisation, and request a rental vehicle.
+  Details: • N.B. Drivers must be 20+ years of age.
+  Leads to: [act_ops_checks_setup]
+
+Action: [act_ops_checks_setup]
+  Title: Ops — Eligibility checks & setup
+  Details: • Confirm driver is 20+ and has line-manager authorisation.
+  Details: • Create a vehicle rental subfolder in “10. Rented Vehicles” with a temporary name.
+  Details: • Confirm the required vehicle — to be approved by the Business Development Director.
+  Details: • Email approved rental companies (see folder ‘4. Rental Vehicle Agreements’).
+  Details: • On order confirmation, email the vehicle registration to the Mypower insurance broker for inclusion on the company insurance policy — save policy docs in folder ‘1. Fleet Insurance’.
+  Details: • Update the subfolder name to include the registration number and vehicle description; file all rental documents in this folder.
+  Details: • Confirm pick-up/drop-off details with Driver, Team Lead, and Department Manager. Ensure the driver thoroughly inspects the vehicle at each instance and, if possible, provides video evidence.
+  Leads to: [act_driver_pickup_inspect]
+
+Action: [act_driver_pickup_inspect]
+  Title: Driver — Pick-up inspection
+  Details: • Inspect the vehicle for damage; take photos/video of the walk-around.
+  Details: • Send the inspection report/video to Ops.
+  Leads to: [act_ops_file_inspection]
+
+Action: [act_ops_file_inspection]
+  Title: Ops — File inspection evidence
+  Details: • File the inspection report (photos/video) in the vehicle rental subfolder.
+  Leads to: [end]
+
+End: [end] END

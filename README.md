@@ -98,65 +98,26 @@ The smart generator expects explicit IDs and optional titles/details; decisions 
 ```text
 ShowKey: False
 
-Start: [start] START
-  Leads to: [dec_stock]
+Start: [S1] START
+ Leads to: [A1]
 
-Decision: [dec_stock] Are there allocated or available inverters/DC in stock?
-  Path "Yes" -> [act_delivery_alloc]
-  Path "No"  -> [act_inverter_quotes]
+Action: [A1]
+Title: Action Title
+Details: First detail line
+Details: • Second detail with bullet
+Details: Third detail line
+Leads to: [D1]
 
-Action: [act_delivery_alloc]
-  Title: Title Here
-  Details: Organise delivery of allocated items (Inverter, EPM, DC) to site. If total van weight exceeds legal limits after loading (use van weights tool), organise delivery via courier.  Otherwise, installers can transport to site.
-  Leads to: [act_sortly_folders]
+Decision: [D1] Should we proceed?
+Path "Yes" -> [A2]
+Path "No" -> [E1]
 
-Action: [act_inverter_quotes]
-  Details: • Contact CCL & Segen for inverter/EPM/Modbus quotes (include project pricing)
-  Details: • Contact Cleveland and Cableworld for DC cable quote
-  Leads to: [act_negotiate]
+Action: [A2]
+Title: Continue Process
+Details: What happens when yes
+Leads to: [E1]
 
-Action: [act_negotiate]
-  Details: Negotiate & proceed with the cheapest option
-  Details: • Provide supplier with Job No & Ref.
-  Details: • Provide Delivery Address.
-  Details: • Provide Contact for Delivery.
-  Details: • Provide Delivery date.
-  Leads to: [act_confirm_orders]
-
-Action: [act_confirm_orders]
-  Details: Get confirmation of orders and save to job folder
-  Leads to: [act_delivery_alloc]
-
-Action: [act_sortly_folders]
-  Details: In Sortly, create a job folder in both 'allocated' and 'delivered to site'.
-  Leads to: [act_move_stock]
-
-Action: [act_move_stock]
-  Details: Move required stock items (Meters, CTs, MC4’s, etc.) from 'stock' into the 'allocated' job folder. Add all ordered items into the 'delivered to site' job folder.
-  Leads to: [act_parts_sheet]
-
-Action: [act_parts_sheet]
-  Details: Navigate to 'Parts ordered' sheet in Job Tracker
-  Leads to: [act_add_job]
-
-Action: [act_add_job]
-  Details: Add the job and list all items needed
-  Leads to: [act_per_item_cols]
-
-Action: [act_per_item_cols]
-  Details: Complete per-item columns
-  Details: • Source (Stock or supplier name)
-  Details: • Order date (if applicable)
-  Details: • Delivery date (if applicable)
-  Details: • Delivery location (Site or QH)
-  Details: • Notes
-  Leads to: [act_reply_confirm]
-
-Action: [act_reply_confirm]
-  Details: Reply-all with screenshot of completed 'Parts ordered' list confirming Inverters & DC ordered to site
-  Leads to: [end]
-
-End: [end] END
+End: [E1] END
 ```
 
 ## Layout and styling
@@ -230,9 +191,6 @@ PyInstaller cannot cross-compile. This repo includes a GitHub Actions workflow t
 - Workflow file: `.github/workflows/build-windows.yml`
 - Triggers: manual (workflow_dispatch), tag pushes matching `v*`, and changes to `build_flowchart_smart.py` on `main`
 - Artifact: `ProcessFlowBuilder-Windows` (contains `ProcessFlowBuilder.exe`)
-
-
-
 
 ## Troubleshooting
 

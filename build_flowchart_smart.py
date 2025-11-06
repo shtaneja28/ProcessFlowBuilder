@@ -507,7 +507,13 @@ def route_orthogonal_detour(slide, p1, p2, rects_all, rgb, exclude_rects=(), use
     return False
 
 # ---------- Render ----------
-def render(schema_text, output_path, logo_path=None, show_key=False, key_path=None):
+def render(
+    schema_text,
+    output_path,
+    logo_path=None,
+    show_key=False,
+    key_path=None,
+):
     prs = Presentation()
     prs.slide_width = Inches(13.333)
     prs.slide_height = Inches(7.5)
@@ -564,14 +570,17 @@ def render(schema_text, output_path, logo_path=None, show_key=False, key_path=No
         "margin_r": Inches(0.6),
         "margin_t": Inches(1.1),
         "margin_b": Inches(0.6),
-        "v_gap": Inches(0.3),
+        "v_gap": Inches(0.4),
         "h_gap": Inches(1.0),
-        "box_w": Inches(3.0),
+        "box_w": Inches(3.5),
         "box_h": Inches(0.9),  # legacy default; dynamic per action below
-        "box_h_min": Inches(0.7),
+        "box_h_min": Inches(0.8),
         "line_height_in": 0.20,  # slightly larger to reduce overflow risk
         "start_end_w": Inches(1.6),
         "start_end_h": Inches(0.55),
+        # Dynamic height tuning for action/info boxes
+        "height_base_in": 0.36,              # base margins in inches
+        "height_safety_factor": 1.22,        # extra factor to reduce overflow
     }
     usable_h = prs.slide_height - cfg["margin_t"] - cfg["margin_b"]
     usable_w = prs.slide_width  - cfg["margin_l"] - cfg["margin_r"]
@@ -685,7 +694,7 @@ def render(schema_text, output_path, logo_path=None, show_key=False, key_path=No
         # margins ~0.14" top/bottom
         content_h_in = (total_lines * line_h_px) / dpi
         # Add a safety factor so PPT's layout differences don't cause overflow
-        h_in = 0.32 + content_h_in * 1.18
+        h_in = cfg["height_base_in"] + content_h_in * cfg["height_safety_factor"]
         return max(cfg["box_h_min"], Inches(h_in))
 
     def node_height(nid):
