@@ -89,14 +89,15 @@ This will display a Key box on the flowchart slide (if `key.txt` exists).
 Save this as `example_process.txt`:
 
 ```
-Start: [START] Order Received
-Details: Customer submits order
+Start: [S1] START
+ Leads to: [A1]
 
 Action: [A1]
 Title: Validate Order
 Details: • Check inventory
 Details: • Verify payment
 Details: • Confirm address
+ Leads to: [D1]
 
 Decision: [D1] Is order valid?
 Path "Yes" -> [A2]
@@ -106,8 +107,9 @@ Action: [A2]
 Title: Process Order
 Details: • Create shipment
 Details: • Send confirmation
+ Leads to: [E1]
 
-End: [E1] Order Complete
+End: [E1] END
 
 ShowKey: True
 ```
