@@ -44,7 +44,7 @@ python3 -m venv .venv
 source .venv/bin/activate
 
 # install dependencies
-pip install python-pptx lxml Pillow
+pip install -r requirements.txt
 
 # Place one or more schema .txt files in this folder
 # (the newest .txt will be used by default)
@@ -68,13 +68,7 @@ python3 build_flowchart_smart.py \
   --showkey   # schema must also contain `ShowKey: True`; schema controls visibility
 ```
 
-You can customise the title, footer and logo path near the bottom of `build_slide_flexible.py`:
 
-```python
-TITLE_TEXT = "Document Name Here"
-LOGO_PATH = "my_power_logo.png"  # set to "" to hide logo
-FOOTER_TEXT = "Document Name – dd/mm/yy - Author: Your Name - Version: Draft"
-```
 
 ## How the smart generator works (high level)
 
@@ -102,22 +96,67 @@ The smart generator expects explicit IDs and optional titles/details; decisions 
   - Paths are rendered to the left, right and bottom (in the order they appear: path1, path2, path3).
 
 ```text
-Start: [S1] Begin
-Details: Initial checks
+ShowKey: False
 
-Action: [A1]
-Title: Verify Inputs
-Details: • Check A
-Details: • Check B
+Start: [start] START
+  Leads to: [dec_stock]
 
-Decision: [D1] Proceed?
-Path "Yes" -> [A2]
-Path "No" -> [E1]
+Decision: [dec_stock] Are there allocated or available inverters/DC in stock?
+  Path "Yes" -> [act_delivery_alloc]
+  Path "No"  -> [act_inverter_quotes]
 
-End: [E1] Done
+Action: [act_delivery_alloc]
+  Title: Title Here
+  Details: Organise delivery of allocated items (Inverter, EPM, DC) to site. If total van weight exceeds legal limits after loading (use van weights tool), organise delivery via courier.  Otherwise, installers can transport to site.
+  Leads to: [act_sortly_folders]
 
-# Optional feature flags in schema
-ShowKey: True
+Action: [act_inverter_quotes]
+  Details: • Contact CCL & Segen for inverter/EPM/Modbus quotes (include project pricing)
+  Details: • Contact Cleveland and Cableworld for DC cable quote
+  Leads to: [act_negotiate]
+
+Action: [act_negotiate]
+  Details: Negotiate & proceed with the cheapest option
+  Details: • Provide supplier with Job No & Ref.
+  Details: • Provide Delivery Address.
+  Details: • Provide Contact for Delivery.
+  Details: • Provide Delivery date.
+  Leads to: [act_confirm_orders]
+
+Action: [act_confirm_orders]
+  Details: Get confirmation of orders and save to job folder
+  Leads to: [act_delivery_alloc]
+
+Action: [act_sortly_folders]
+  Details: In Sortly, create a job folder in both 'allocated' and 'delivered to site'.
+  Leads to: [act_move_stock]
+
+Action: [act_move_stock]
+  Details: Move required stock items (Meters, CTs, MC4’s, etc.) from 'stock' into the 'allocated' job folder. Add all ordered items into the 'delivered to site' job folder.
+  Leads to: [act_parts_sheet]
+
+Action: [act_parts_sheet]
+  Details: Navigate to 'Parts ordered' sheet in Job Tracker
+  Leads to: [act_add_job]
+
+Action: [act_add_job]
+  Details: Add the job and list all items needed
+  Leads to: [act_per_item_cols]
+
+Action: [act_per_item_cols]
+  Details: Complete per-item columns
+  Details: • Source (Stock or supplier name)
+  Details: • Order date (if applicable)
+  Details: • Delivery date (if applicable)
+  Details: • Delivery location (Site or QH)
+  Details: • Notes
+  Leads to: [act_reply_confirm]
+
+Action: [act_reply_confirm]
+  Details: Reply-all with screenshot of completed 'Parts ordered' list confirming Inverters & DC ordered to site
+  Leads to: [end]
+
+End: [end] END
 ```
 
 ## Layout and styling
@@ -169,9 +208,9 @@ Create a distribution folder with:
 
 1. **ProcessFlowBuilder** (or `.exe` on Windows)
 2. **USER_GUIDE.md** (copy this file for end users)
-3. **Example schema file** (e.g., `example_process.txt`)
-4. **Optional:** `my_power_logo.png` (as a template)
-5. **Optional:** `key.txt` (as a template)
+3. **QUICK_START_WINDOWS_BUILD.md** (for maintainers who need a Windows build)
+4. **Optional:** `my_power_logo.png` (template logo)
+5. **Optional:** `key.txt` (template for Key box)
 
 ### Distribution Instructions
 
@@ -183,6 +222,16 @@ Provide to end users:
 5. The PowerPoint file will be generated in the same folder
 
 See `USER_GUIDE.md` for detailed instructions for non-technical users.
+
+### Building a Windows executable from macOS
+
+PyInstaller cannot cross-compile. This repo includes a GitHub Actions workflow that builds a Windows executable for you:
+
+- Workflow file: `.github/workflows/build-windows.yml`
+- Triggers: manual (workflow_dispatch), tag pushes matching `v*`, and changes to `build_flowchart_smart.py` on `main`
+- Artifact: `ProcessFlowBuilder-Windows` (contains `ProcessFlowBuilder.exe`)
+
+
 
 
 ## Troubleshooting
